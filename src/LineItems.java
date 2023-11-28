@@ -84,11 +84,11 @@ public class LineItems {
         map.put(8,"L_RETURNFLAG");
         map.put(9,"L_LINESTATUS");
         map.put(10,"L_SHIP");
-        map.put(11,"L_RECEIPT");
-        map.put(12,"L_COMMIT");
+        map.put(12,"L_RECEIPT");
+        map.put(11,"L_COMMIT");
         map.put(13,"L_SHIPINSTRUCT");
         map.put(14,"L_SHIPMODE");
-        map.put(15,"C_COMMENT");
+        map.put(15,"L_COMMENT");
     }
 
     public List<String> getL_ORDERKEY() {
@@ -160,5 +160,9 @@ public class LineItems {
     }
     public Map<Integer, String> getMap() {
         return map;
+    }
+
+    public void setLists(List<List<String>> lists) {
+        this.lists = lists;
     }
 }

@@ -80,4 +80,8 @@ public class Supplier {
     public Map<Integer, String> getMap() {
         return map;
     }
+
+    public void setLists(List<List<String>> lists) {
+        this.lists = lists;
+    }
 }

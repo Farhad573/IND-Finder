@@ -51,7 +51,9 @@ public class Customers {
         map.put(7,"C_COMMENT");
     }
 
-
+    public void setLists(List<List<String>> lists) {
+        this.lists = lists;
+    }
 
     public List<String> getC_CUSTKEY() {
         return C_CUSTKEY;
