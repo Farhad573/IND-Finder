@@ -1,5 +1,4 @@
-import com.opencsv.CSVReader;
-import com.opencsv.CSVReaderBuilder;
+
 
 import java.io.*;
 import java.util.*;
@@ -23,6 +22,7 @@ public class Data {
     public Data() throws IOException {
         makeFiles();
         readAll();
+        removeDuplicates();
         sortAll();
 
 //        checkCustomer();
@@ -36,12 +36,12 @@ public class Data {
         appendAllColoumns();
         checkallColoumns();
     }
-    private  Comparator<String> getNumericStringComparator() {
+    public  Comparator<String> getNumericStringComparator() {
         return (str1, str2) -> {
             // Try parsing the strings to compare numerically
             try {
-                str1 = str1.startsWith("\"")? str1.substring(1):str1;
-                str2 = str2.startsWith("\"")? str2.substring(1):str2;
+//                str1 = str1.startsWith("\"")? str1.substring(1):str1;
+//                str2 = str2.startsWith("\"")? str2.substring(1):str2;
                 Double num1 = Double.parseDouble(str1);
                 Double num2 = Double.parseDouble(str2);
                 return num1.compareTo(num2);
@@ -215,7 +215,8 @@ public class Data {
         while ((line = reader.readLine()) != null){
             String[] tokens = line.split("\";\"");
             for(int i = 0; i<tokens.length;i++){
-                lists.get(i).add(tokens[i]);
+                String token = tokens[i].startsWith("\"")? tokens[i].substring(1) : tokens[i];
+                lists.get(i).add(token);
             }
         }
         reader.close();
@@ -225,9 +226,7 @@ public class Data {
 //        }
         this.customers = new Customers(C_CUSTKEY,C_NAME,C_ADDRESS,C_NATIONKEY,C_PHONE,C_ACCTBAL,C_MKTSEGMENT,C_COMMENT);
         this.customers.setLists(lists);
-        for (int i = 0; i < 5; i++) {
-            System.out.println(this.getCustomers().getLists().get(0).get(i));
-        }
+
     }
     public void readLineItemFile(File file) throws IOException {
         List<String> L_ORDERKEY = new ArrayList<>();
@@ -270,7 +269,8 @@ public class Data {
         while ((line = reader.readLine()) != null){
             String[] tokens = line.split("\";\"");
             for(int i = 0; i<tokens.length;i++){
-                lists.get(i).add(tokens[i]);
+                String token = tokens[i].startsWith("\"")? tokens[i].substring(1) : tokens[i];
+                lists.get(i).add(token);
             }
         }
         reader.close();
@@ -304,7 +304,8 @@ public class Data {
         while ((line = reader.readLine()) != null){
             String[] tokens = line.split("\";\"");
             for(int i = 0; i<tokens.length;i++){
-                lists.get(i).add(tokens[i]);
+                String token = tokens[i].startsWith("\"")? tokens[i].substring(1) : tokens[i];
+                lists.get(i).add(token);
             }
         }
         reader.close();
@@ -340,7 +341,8 @@ public class Data {
         while ((line = reader.readLine()) != null){
             String[] tokens = line.split("\";\"");
             for(int i = 0; i<tokens.length;i++){
-                lists.get(i).add(tokens[i]);
+                String token = tokens[i].startsWith("\"")? tokens[i].substring(1) : tokens[i];
+                lists.get(i).add(token);
             }
         }
         reader.close();
@@ -375,7 +377,8 @@ public class Data {
         while ((line = reader.readLine()) != null){
             String[] tokens = line.split("\";\"");
             for(int i = 0; i<tokens.length;i++){
-                lists.get(i).add(tokens[i]);
+                String token = tokens[i].startsWith("\"")? tokens[i].substring(1) : tokens[i];
+                lists.get(i).add(token);
             }
         }
         reader.close();
@@ -398,7 +401,8 @@ public class Data {
         while ((line = reader.readLine()) != null){
             String[] tokens = line.split("\";\"");
             for(int i = 0; i<tokens.length;i++){
-                lists.get(i).add(tokens[i]);
+                String token = tokens[i].startsWith("\"")? tokens[i].substring(1) : tokens[i];
+                lists.get(i).add(token);
             }
         }
         reader.close();
@@ -429,7 +433,8 @@ public class Data {
         while ((line = reader.readLine()) != null){
             String[] tokens = line.split("\";\"");
             for(int i = 0; i<tokens.length;i++){
-                lists.get(i).add(tokens[i]);
+                String token = tokens[i].startsWith("\"")? tokens[i].substring(1) : tokens[i];
+                lists.get(i).add(token);
             }
         }
         reader.close();
@@ -460,6 +465,64 @@ public class Data {
         }
         System.out.println("All files were read");
 
+    }
+    public void removeDuplicates(){
+        List<List<String>> customerList = new ArrayList<>();
+        List<List<String>> lineItemList = new ArrayList<>();
+        List<List<String>> nationList = new ArrayList<>();
+        List<List<String>> orderList = new ArrayList<>();
+        List<List<String>> partList = new ArrayList<>();
+        List<List<String>> regionList = new ArrayList<>();
+        List<List<String>> supplerList = new ArrayList<>();
+        for (List<String> list:
+                this.customers.getLists()) {
+            List<String> tmp = new ArrayList<>(new HashSet<>(list));
+            customerList.add(tmp);
+        }
+        this.customers.setLists(customerList);
+        System.out.println("duplicates in customer are removed");
+        for (List<String> list:
+                this.lineItems.getLists()) {
+            List<String> tmp = new ArrayList<>(new HashSet<>(list));
+            lineItemList.add(tmp);
+        }
+        this.lineItems.setLists(lineItemList);
+        System.out.println("duplicates in lineItems are removed");
+        for (List<String> list:
+                this.nation.getLists()) {
+            List<String> tmp = new ArrayList<>(new HashSet<>(list));
+            nationList.add(tmp);
+        }
+        this.nation.setLists(nationList);
+        System.out.println("duplicates in nation are removed");
+        for (List<String> list:
+                this.orders.getLists()) {
+            List<String> tmp = new ArrayList<>(new HashSet<>(list));
+            orderList.add(tmp);
+        }
+        this.orders.setLists(orderList);
+        System.out.println("duplicates in orders are removed");
+        for (List<String> list:
+                this.part.getLists()) {
+            List<String> tmp = new ArrayList<>(new HashSet<>(list));
+            partList.add(tmp);
+        }
+        this.part.setLists(partList);
+        System.out.println("duplicates in parts are removed");
+        for (List<String> list:
+                this.region.getLists()) {
+            List<String> tmp = new ArrayList<>(new HashSet<>(list));
+            regionList.add(tmp);
+        }
+        this.region.setLists(regionList);
+        System.out.println("duplicates in region are removed");
+        for (List<String> list:
+                this.supplier.getLists()) {
+            List<String> tmp = new ArrayList<>(new HashSet<>(list));
+            supplerList.add(tmp);
+        }
+        this.supplier.setLists(supplerList);
+        System.out.println("duplicates in supplier are removed");
     }
 
     public void sortAll(){
@@ -664,24 +727,40 @@ public class Data {
     }
     public void checkallColoumns(){
         List<List<String>> lists = this.allColounms;
-        for(int i = 0; i< lists.size();i++){
-            for (int j = 1; j< lists.size();j++){
-                int end = Math.min(lists.get(i).size(),lists.get(j).size());
-                for (int k = 0; k< end;k++){
-                    if(i==j){
-                        break;
-                    }
-                    else if ((! lists.get(i).get(k).equals(lists.get(j).get(k))) && (! lists.get(j).contains(lists.get(i).get(k)))){
-                        break;
-                    } else if ((k == lists.get(i).size() - 1) || lists.get(i).get(k).equals(lists.get(j).get(k)) ) {
-                        String coloumn1 = "";
-                        String coloumn2 = "";
-                        coloumn1 = this.map.get(i);
-                        coloumn2 = this.map.get(j);
-                        first.add(coloumn1);
-                        second.add(coloumn2);
-                    }
-                }
+//        for(int i = 0; i< lists.size();i++){
+//            for (int j = 1; j< lists.size();j++){
+//                int end = Math.min(lists.get(i).size(),lists.get(j).size());
+//                for (int k = 0; k< end;k++){
+//                    if(i==j){
+//                        break;
+//                    }
+//                    else if ((! lists.get(i).get(k).equals(lists.get(j).get(k))) && (! lists.get(j).contains(lists.get(i).get(k)))){
+//                        break;
+//                    } else if ((k == lists.get(i).size() - 1) || lists.get(i).get(k).equals(lists.get(j).get(k)) ) {
+//                        String coloumn1 = "";
+//                        String coloumn2 = "";
+//                        coloumn1 = this.map.get(i);
+//                        coloumn2 = this.map.get(j);
+//                        first.add(coloumn1);
+//                        second.add(coloumn2);
+//                    }
+//                }
+//            }
+//        }
+        int limit = Math.min(lists.get(49).size(),lists.get(10).size());
+        List<String> first = lists.get(49);
+        List<String> second = lists.get(10);
+        for (int i = 0; i < limit; i++) {
+            if ((! first.get(i).equals(second.get(i))) && (! second.contains(first.get(i)))){
+                System.out.println(i);
+                System.out.println(first.get(i));
+                System.out.println(second.get(i));
+                System.out.println("no inclusion found");
+                return;
+            } else if ((i == limit - 1) && (first.get(i).equals(second.get(i)) || second.contains(first.get(i)) )) {
+                System.out.println("inclusion found");
+            }else {
+                continue;
             }
         }
         System.out.println("All Columns were checked");
