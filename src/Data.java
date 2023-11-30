@@ -727,42 +727,45 @@ public class Data {
     }
     public void checkallColoumns(){
         List<List<String>> lists = this.allColounms;
-//        for(int i = 0; i< lists.size();i++){
-//            for (int j = 1; j< lists.size();j++){
-//                int end = Math.min(lists.get(i).size(),lists.get(j).size());
-//                for (int k = 0; k< end;k++){
-//                    if(i==j){
-//                        break;
-//                    }
-//                    else if ((! lists.get(i).get(k).equals(lists.get(j).get(k))) && (! lists.get(j).contains(lists.get(i).get(k)))){
-//                        break;
-//                    } else if ((k == lists.get(i).size() - 1) || lists.get(i).get(k).equals(lists.get(j).get(k)) ) {
-//                        String coloumn1 = "";
-//                        String coloumn2 = "";
-//                        coloumn1 = this.map.get(i);
-//                        coloumn2 = this.map.get(j);
-//                        first.add(coloumn1);
-//                        second.add(coloumn2);
-//                    }
-//                }
-//            }
-//        }
-        int limit = Math.min(lists.get(49).size(),lists.get(10).size());
-        List<String> first = lists.get(49);
-        List<String> second = lists.get(10);
-        for (int i = 0; i < limit; i++) {
-            if ((! first.get(i).equals(second.get(i))) && (! second.contains(first.get(i)))){
-                System.out.println(i);
-                System.out.println(first.get(i));
-                System.out.println(second.get(i));
-                System.out.println("no inclusion found");
-                return;
-            } else if ((i == limit - 1) && (first.get(i).equals(second.get(i)) || second.contains(first.get(i)) )) {
-                System.out.println("inclusion found");
-            }else {
-                continue;
+        for(int i = 0; i< lists.size();i++){
+            for (int j = 1; j< lists.size();j++){
+                int end = Math.min(lists.get(i).size(),lists.get(j).size());
+                for (int k = 0; k< end;k++){
+                    if(i==j){
+                        break;
+                    }
+                    else if ((! lists.get(i).get(k).equals(lists.get(j).get(k))) && (! lists.get(j).contains(lists.get(i).get(k)))){
+                        break;
+                    } else if ((k == end - 1) && (lists.get(i).get(k).equals(lists.get(j).get(k)) || lists.get(j).contains(lists.get(i).get(k)) )) {
+                        String coloumn1 = "";
+                        String coloumn2 = "";
+                        coloumn1 = this.map.get(i);
+                        coloumn2 = this.map.get(j);
+                        first.add(coloumn1);
+                        second.add(coloumn2);
+                    }
+                }
             }
         }
+//        int firstIndex = 49;
+//        int secondIndex = 37;
+//
+//        int limit = Math.min(firstIndex,secondIndex);
+//        List<String> first = lists.get(firstIndex);
+//        List<String> second = lists.get(secondIndex);
+//        for (int i = 0; i < limit; i++) {
+//            if ((! first.get(i).equals(second.get(i))) && (! second.contains(first.get(i)))){
+//                System.out.println(i);
+//                System.out.println(first.get(i));
+//                System.out.println(second.get(i));
+//                System.out.println("no inclusion found");
+//                return;
+//            } else if ((i == limit - 1) && (first.get(i).equals(second.get(i)) || second.contains(first.get(i)) )) {
+//                System.out.println("inclusion found");
+//            }else {
+//                continue;
+//            }
+//        }
         System.out.println("All Columns were checked");
     }
 
