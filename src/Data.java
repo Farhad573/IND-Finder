@@ -2,6 +2,7 @@
 
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.*;
 
 public class Data {
 
@@ -17,7 +18,7 @@ public class Data {
     private List<List<String>> allColounms;
     private List<String> first = new ArrayList<>();
     private List<String> second = new ArrayList<>();
-    private Map<Integer,String> map = new HashMap<>();
+    private ConcurrentHashMap<Integer,String> map = new ConcurrentHashMap<>();
 
     public Data() throws IOException {
         makeFiles();
@@ -34,7 +35,8 @@ public class Data {
 //        checkSupplier();
         fillTheMap();
         appendAllColoumns();
-        checkallColoumns();
+        //checkallColoumns();
+        checkallColoumnsInParallel();
     }
     public  Comparator<String> getNumericStringComparator() {
         return (str1, str2) -> {
@@ -727,46 +729,197 @@ public class Data {
     }
     public void checkallColoumns(){
         List<List<String>> lists = this.allColounms;
-        for(int i = 0; i< lists.size();i++){
-            for (int j = 1; j< lists.size();j++){
-                int end = Math.min(lists.get(i).size(),lists.get(j).size());
-                for (int k = 0; k< end;k++){
-                    if(i==j){
-                        break;
+//        for(int i = 0; i< lists.size();i++){
+//            for (int j = i+1; j< lists.size();j++){
+//                System.out.println("i is:" + i);
+//                System.out.println("j is:" + j);
+//                int end = Math.min(lists.get(i).size(),lists.get(j).size());
+//                for (int k = 0; k< end;k++){
+//                    if( i==j ){
+//                        break;
+//                    }
+//                    else if ((! lists.get(i).get(k).equals(lists.get(j).get(k)))){
+//                        Set<String> second = new HashSet<>(lists.get(j));
+//                        int finalI = i;
+//                        int finalK = k;
+//                        boolean notFound = second.parallelStream().anyMatch(x -> x.equals(lists.get(finalI).get(finalK)));
+//                        if(! notFound) {
+//                            System.out.println("no inclusion");
+//                            break;
+//                        }else {
+//                            System.out.println("i is " + i +" j is " + j +" k is: " + k);
+//                        }
+//                    } else if ((k == end - 1) && (lists.get(i).get(k).equals(lists.get(j).get(k)) || lists.get(j).contains(lists.get(i).get(k)) )) {
+//                        System.out.println("inclusion found");
+//                        String coloumn1 = "";
+//                        String coloumn2 = "";
+//
+//                        coloumn1 = lists.get(i).size() < lists.get(j).size()? this.map.get(i) : this.map.get(j);
+//                        coloumn2 = lists.get(i).size() < lists.get(j).size()? this.map.get(j) : this.map.get(i);
+//                        first.add(coloumn1);
+//                        second.add(coloumn2);
+//                    }else {
+//                        System.out.println("k is: " + k);
+//                    }
+//                }
+//            }
+//        }
+        int firstIndex = 11;
+        int secondIndex = 52;
+
+        int limit = Math.min(lists.get(firstIndex).size(),lists.get(secondIndex).size());
+       List<String> first = lists.get(firstIndex);
+        List<String> second = lists.get(secondIndex);
+
+        for (int i = 0; i < limit; i++) {
+            if ((! first.get(i).equals(second.get(i)))){
+                System.out.println("indexes are not equal. checking containment:");
+                System.out.println("i is:" + first.get(i) + " j is: " + second.get(i));
+                List<String> listI = limit != first.size()? first : second;
+                List<String> listJ = limit == first.size()? first : second;
+                if(! checkContainmentInParallelForLargeList(listI,listJ)) {
+                    System.out.println(i);
+                    System.out.println(first.get(i));
+                    System.out.println(second.get(i));
+                    System.out.println("no inclusion found");
+                    return;
+                }else {
+                    System.out.println("inclusion found");
+                    return;
+                }
+            } else if ((i == limit - 1) && (first.get(i).equals(second.get(i)) || second.contains(first.get(i)) )) {
+                System.out.println("inclusion found");
+            }else {
+
+            }
+        }
+        System.out.println("All Columns were checked");
+    }
+    public void checkallColoumnsInParallel() {
+        List<List<String>> lists = this.allColounms;
+        for (int i = 0; i < lists.size(); i++) {
+            System.out.println("i is:" + i);
+            processInParallel(i);
+        }
+    }
+    private void processInParallel(int i) {
+        List<String> listI = this.allColounms.get(i);
+        for (int j = i + 1; j < this.allColounms.size(); j++) {
+            System.out.println("j is:" + j);
+            List<String> listJ = this.allColounms.get(j);
+            int end = Math.min(listI.size(), listJ.size());
+            for (int k = 0; k < end; k++) {
+                if (i == j) {
+                    break;
+                } else if (!listI.get(k).equals(listJ.get(k))) {
+                    // Check the size of listJ
+                        // Parallelize the check if listJ size exceeds the threshold
+                    List<String> listII = end != listI.size()? listI : listJ;
+                    List<String> listJJ = end == listI.size()? listI : listJ;
+                        boolean notFound = checkContainmentInParallelForLargeList(listII, listJJ);
+                        if (!notFound) {
+                            System.out.println("no inclusion");
+                            break;
+                        } else if (notFound){
+                            System.out.println("inclusion found");
+                            String column1 = "";
+                            String column2 = "";
+
+                            column1 = listII.size() < listJJ.size() ? map.get(i) : map.get(j);
+                            column2 = listII.size() < listJJ.size() ? map.get(j) : map.get(i);
+                            first.add(column1);
+                            second.add(column2);
+                            if(listII.size() == listJJ.size()){
+                                first.add(column2);
+                                second.add(column1);
+                            }
+
+                            break;
+                        }
+
+                } else if ((k == end - 1) && (listI.get(k).equals(listJ.get(k)) || listJ.contains(listI.get(k)))) {
+                    System.out.println("inclusion found");
+                    String column1 = "";
+                    String column2 = "";
+
+                    column1 = listI.size() < listJ.size() ? map.get(i) : map.get(j);
+                    column2 = listI.size() < listJ.size() ? map.get(j) : map.get(i);
+                    first.add(column1);
+                    second.add(column2);
+                    if(listI.size() == listJ.size()){
+                        first.add(column2);
+                        second.add(column1);
                     }
-                    else if ((! lists.get(i).get(k).equals(lists.get(j).get(k))) && (! lists.get(j).contains(lists.get(i).get(k)))){
-                        break;
-                    } else if ((k == end - 1) && (lists.get(i).get(k).equals(lists.get(j).get(k)) || lists.get(j).contains(lists.get(i).get(k)) )) {
-                        String coloumn1 = "";
-                        String coloumn2 = "";
-                        coloumn1 = this.map.get(i);
-                        coloumn2 = this.map.get(j);
-                        first.add(coloumn1);
-                        second.add(coloumn2);
-                    }
+                }
+                else {
+                    System.out.println("i is " + i + " j is " + j + "k is: " + k);
                 }
             }
         }
-//        int firstIndex = 49;
-//        int secondIndex = 37;
-//
-//        int limit = Math.min(firstIndex,secondIndex);
-//        List<String> first = lists.get(firstIndex);
-//        List<String> second = lists.get(secondIndex);
-//        for (int i = 0; i < limit; i++) {
-//            if ((! first.get(i).equals(second.get(i))) && (! second.contains(first.get(i)))){
-//                System.out.println(i);
-//                System.out.println(first.get(i));
-//                System.out.println(second.get(i));
-//                System.out.println("no inclusion found");
-//                return;
-//            } else if ((i == limit - 1) && (first.get(i).equals(second.get(i)) || second.contains(first.get(i)) )) {
-//                System.out.println("inclusion found");
-//            }else {
-//                continue;
-//            }
-//        }
-        System.out.println("All Columns were checked");
+    }
+
+    private boolean checkContainment(String value, List<String> list) {
+        return list.contains(value);
+    }
+
+    private boolean checkContainmentInParallelForLargeList(List<String> listI, List<String> listJ) {
+        // Check containment in parallel for large list
+        ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+
+        // Divide the list into segments for parallel processing
+        List<Future<Boolean>> futures = new ArrayList<>();
+        int segmentSize = listJ.size() / Runtime.getRuntime().availableProcessors();
+        int remainder = listJ.size() % Runtime.getRuntime().availableProcessors();
+
+        int start = 0;
+        for (int i = 0; i < Runtime.getRuntime().availableProcessors(); i++) {
+            System.out.println("number of loop is : " + i);
+            int size = segmentSize + (remainder-- > 0 ? 1 : 0);
+            int end = start + size;
+            final int startIndex = start;
+            final int endIndex = end;
+
+            List<String> sublist = listJ.subList(startIndex,endIndex);
+
+            // Submit segments to the executor for parallel processing
+            Future<Boolean> future = executorService.submit(() ->
+                    search(listI,sublist)
+            );
+            futures.add(future);
+
+            start = end;
+        }
+
+        // Wait for all segments to complete
+        boolean found = true;
+        for (Future<Boolean> future : futures) {
+            try {
+                if (! future.get()) {
+                    found = false;
+                    break;
+                }
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+        }
+
+        // Shut down the executor service
+        executorService.shutdown();
+
+        return found;
+    }
+
+    public boolean search(List<String> listI, List<String> listJ){
+        boolean result = true;
+        for (int i = 0; i < listJ.size(); i++) {
+            //System.out.println("checking index is:" + listJ.get(i));
+            if (! listI.contains(listJ.get(i))){
+                System.out.println("the following was not found in listI:" + listJ.get(i));
+                return false;
+            }
+        }
+        System.out.println("everything in listJ was included in listI");
+        return result;
     }
 
 }
