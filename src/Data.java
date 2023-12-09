@@ -20,6 +20,8 @@ public class Data {
     private List<String> second = new ArrayList<>();
     private ConcurrentHashMap<Integer,String> map = new ConcurrentHashMap<>();
 
+    private HashMap<String,List<String>> resultMap = new HashMap<>();
+
     public Data() throws IOException {
         makeFiles();
         readAll();
@@ -33,10 +35,10 @@ public class Data {
 //        checkPart();
 //        checkRegions();
 //        checkSupplier();
-        fillTheMap();
+       fillTheMap();
         appendAllColoumns();
-        //checkallColoumns();
-        checkallColoumnsInParallel();
+        checkallColoumns();
+      //  checkallColoumnsInParallel();
     }
     public  Comparator<String> getNumericStringComparator() {
         return (str1, str2) -> {
@@ -168,6 +170,23 @@ public class Data {
         return map;
     }
 
+    public HashMap<String, List<String>> getResultMap() {
+        return resultMap;
+    }
+
+
+    public boolean checkMap( String key, String value) {
+        if (!this.resultMap.containsKey(key)) {
+            this.resultMap.put(key, new ArrayList<>());
+            this.resultMap.get(key).add(value);
+            return true;
+        }else
+            if(!this.resultMap.get(key).contains(value)){
+                this.resultMap.get(key).add(value);
+                return true;
+            }else
+                return false;
+    }
 
     public  void makeFiles(){
         File file = new File("resources");
@@ -764,9 +783,10 @@ public class Data {
 //                }
 //            }
 //        }
-        int firstIndex = 11;
-        int secondIndex = 52;
-
+        int firstIndex = 18;
+        int secondIndex = 20;
+        System.out.println("size of listI is: " + lists.get(firstIndex).size());
+        System.out.println("size of listJ is: " + lists.get(secondIndex).size());
         int limit = Math.min(lists.get(firstIndex).size(),lists.get(secondIndex).size());
        List<String> first = lists.get(firstIndex);
         List<String> second = lists.get(secondIndex);

@@ -26,18 +26,18 @@ public class Main {
 //        System.out.println(set.);
 
 //    || (i == 8 || i == 9 || i == 10 || i == 28 || i == 29) && (j == 28 || j == 37 || j ==49)
-        BufferedWriter writer = new BufferedWriter(new FileWriter("resources/resultTest.txt"));
-        writer.write("Coloumn1          coloum2");
-        writer.newLine();
-        for (int i = 0; i < data.getFirst().size(); i++) {
-            writer.write(data.getFirst().get(i));
-            writer.write("\t");
-            writer.write("c");
-            writer.write("\t");
-            writer.write(data.getSecond().get(i));
-            writer.newLine();
-        }
-        writer.close();
+//        BufferedWriter writer = new BufferedWriter(new FileWriter("resources/resultTest.txt"));
+//        writer.write("Coloumn1          coloum2");
+//        writer.newLine();
+//        for (int i = 0; i < data.getFirst().size(); i++) {
+//            writer.write(data.getFirst().get(i));
+//            writer.write("\t");
+//            writer.write("c");
+//            writer.write("\t");
+//            writer.write(data.getSecond().get(i));
+//            writer.newLine();
+//        }
+//        writer.close();
 //        List<List<Integer>> lists = new ArrayList<>();
 //        List<Integer> list = new ArrayList<>();
 //        for (int i = 0; i < 100; i++) {

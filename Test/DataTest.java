@@ -51,7 +51,7 @@ class DataTest {
         File file = datas.getFiles().stream().filter(x-> x.getName().contains("lineitem")).findFirst().get();
         datas.readLineItemFile(file);
         List<List<String>> lists = datas.getLineItems().getLists();
-        BufferedWriter writer = new BufferedWriter(new FileWriter("resources/lineItemTest.csv"));
+        BufferedWriter writer = new BufferedWriter(new FileWriter("resources/lineItemTest2.csv"));
         //String firstline = "C_CUSTKEY   C_NAME  C_ADDRESS   C_NATIONKEY     C_PHONE     C_ACCTBAL   C_MKTSEGMENT    C_COMMENT";
         //writer.write(firstline);
         //writer.newLine();
@@ -66,11 +66,11 @@ class DataTest {
         //  lists.get(0).forEach(System.out::println);
         for (int i = 0;i < lists.get(0).size();i++
         ) {
-            writer.write(lists.get(15).get(i));
+            writer.write(lists.get(10).get(i));
             writer.newLine();
         }
         writer.close();
-        System.out.println(lists.get(12).size());
+        //System.out.println(lists.get(12).size());
 
     }
 
